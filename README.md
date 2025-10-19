@@ -66,7 +66,7 @@ This approach models the decoder as a proper state machine with three distinct s
 - Might be overkill for this particular problem
 - Requires understanding of state machine concepts
 
-Perfect for when you want formal correctness or plan to extend the functionality significantly. Like building a proper architecture before the codebase grows too large.
+Good for when you want formal correctness or plan to extend the functionality significantly. Like building a proper architecture before the codebase grows too large.
 
 ## Getting Started
 
@@ -103,7 +103,7 @@ Console.WriteLine(result); // Output: HELLO
 
 ## Test Coverage
 
-This project includes 40+ comprehensive unit tests covering:
+This project includes 40+ unit tests covering:
 
 - All provided examples
 - Edge cases (empty input, multiple backspaces, excessive spaces)
@@ -112,12 +112,12 @@ This project includes 40+ comprehensive unit tests covering:
 - Pause handling (spaces between same-key presses)
 - Backspace operations (including backspacing empty strings)
 - Special keys (symbols on key 1, space on key 0)
-- **State transition tests** (verifying FSM behavior)
+- State transition tests - verifying FSM behavior
 - Complex real-world scenarios (SOS, HELLO WORLD, etc.)
 - Error handling (null input, missing send character)
-- Stress tests (long inputs, alternating keys, many backspaces)
+- Stress tests with long inputs, alternating keys, many backspaces
 
-The FSM approach shines particularly in state transition tests, where we can verify the machine moves between states correctly.
+The FSM approach works especially well for state transition tests where you can verify the machine moves between states correctly.
 
 ## Project Structure
 
@@ -127,7 +127,7 @@ OldPhonePad-FSM/
 │   ├── OldPhonePad.cs                    # FSM decoder implementation
 │   └── OldPhonePad.FSM.csproj
 ├── tests/
-│   ├── OldPhonePadTests.cs              # Comprehensive test suite
+│   ├── OldPhonePadTests.cs              # Test suite
 │   └── OldPhonePad.FSM.Tests.csproj
 ├── .github/
 │   └── workflows/
@@ -177,19 +177,19 @@ The main loop iterates through input, delegating to the appropriate state handle
 
 ## Extensions & Ideas
 
-The FSM structure makes certain extensions particularly natural:
+The FSM structure makes some extensions pretty natural:
 
 - Add a "Predicting" state for T9-style dictionary lookups
 - Implement an "Error" state for invalid sequences
 - Add a "Confirming" state for requiring explicit confirmation
-- Create visual state transition diagrams for debugging
-- Implement state history tracking for undo/redo
+- Visual state transition diagrams for debugging
+- State history tracking for undo/redo
 - Build a state machine debugger/visualizer
-- Add timeout states (auto-commit after delay)
+- Timeout states that auto-commit after delay
 
 ## Alternatives
 
-If you enjoyed this approach, check out my other implementations:
+Check out my other implementations:
 - **OldPhonePad-DictionaryState**: Simple dictionary with manual state tracking
 - **OldPhonePad-Grouping**: Groups consecutive digits before processing
 - **OldPhonePad-OOP**: Object-oriented design with separate classes
@@ -205,7 +205,7 @@ Please follow standard C# conventions and include tests for any new functionalit
 
 ## License
 
-MIT License - see LICENSE file for details. Use it, modify it, extend the state machine. Just remember: every text message you ever sent was a computation on a state machine.
+MIT License - see LICENSE file for details. Use it, modify it, extend the state machine. Remember: every text message you ever sent was a computation on a state machine.
 
 ## Acknowledgments
 

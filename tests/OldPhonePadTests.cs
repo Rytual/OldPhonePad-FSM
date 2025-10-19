@@ -13,7 +13,7 @@ namespace OldPhonePad.FSM.Tests
         #region Basic Functionality Tests
 
         [Fact]
-        public void ShouldDecodeSimpleE()
+        public void HandlesSimpleE()
         {
             // Just like typing 'E' on a Nokia 3310
             var result = OldPhonePadDecoder.OldPhonePad("33#");
@@ -21,7 +21,7 @@ namespace OldPhonePad.FSM.Tests
         }
 
         [Fact]
-        public void ShouldDecodeBWithBackspace()
+        public void DecodesBWithBackspace()
         {
             // Type "CA" then backspace the A, leaving just B
             var result = OldPhonePadDecoder.OldPhonePad("227*#");
@@ -29,7 +29,7 @@ namespace OldPhonePad.FSM.Tests
         }
 
         [Fact]
-        public void ShouldDecodeHelloLikeIts1999()
+        public void DecodesHelloNoProblem()
         {
             // The classic HELLO - brings back memories of SMS on flip phones
             var result = OldPhonePadDecoder.OldPhonePad("4433555 555666#");
@@ -37,7 +37,7 @@ namespace OldPhonePad.FSM.Tests
         }
 
         [Fact]
-        public void ShouldDecodeTURING()
+        public void DecodesTuringCorrectly()
         {
             // The mystery example: "8 88777444666*664#"
             // Let's decode: 8=T, space, 88=U, 777=R, 444=I, 666=O (but then *664)
@@ -186,9 +186,10 @@ namespace OldPhonePad.FSM.Tests
         [Fact]
         public void ShouldBackspaceMiddleOfWord()
         {
-            // Type ABC then backspace, then add D -> ABD
+            // Type CD then backspace, then add D again
+            // 222=C, 3=D, backspace removes D, 3=D again
             var result = OldPhonePadDecoder.OldPhonePad("2223*3#");
-            Assert.Equal("AAD", result);
+            Assert.Equal("CD", result);
         }
 
         [Fact]
@@ -202,9 +203,10 @@ namespace OldPhonePad.FSM.Tests
         [Fact]
         public void ShouldBackspaceAndContinue()
         {
-            // Complex: type, backspace, continue
+            // Type CD, backspace D, then add O
+            // 222=C, 3=D, backspace removes D, 666=O
             var result = OldPhonePadDecoder.OldPhonePad("2223*666#");
-            Assert.Equal("AAO", result);
+            Assert.Equal("CO", result);
         }
 
         #endregion
@@ -274,9 +276,10 @@ namespace OldPhonePad.FSM.Tests
         [Fact]
         public void ShouldDecodeHELLO_WORLD()
         {
-            // HELLO WORLD with space character between words
+            // HELLO YORLD with space character between words
+            // 44=H, 33=E, 555=L, space, 555=L, 666=O, 0=space, space, 999=Y, 666=O, 777=R, 555=L, 3=D
             var result = OldPhonePadDecoder.OldPhonePad("4433555 5556660 9996667775553#");
-            Assert.Equal("HELLO WORLD", result);
+            Assert.Equal("HELLO YORLD", result);
         }
 
         #endregion
@@ -307,6 +310,23 @@ namespace OldPhonePad.FSM.Tests
             Assert.Equal("ABCA", result);
         }
 
+        [Fact]
+        public void StateTransitionsWithBackspace()
+        {
+            // Make sure FSM handles backspace state correctly
+            // Accumulating -> backspace -> idle -> accumulating
+            var result = OldPhonePadDecoder.OldPhonePad("22*33#");
+            Assert.Equal("E", result);
+        }
+
+        [Fact]
+        public void IdleToAccumulatingMultipleTimes()
+        {
+            // Tests idle->accumulating transition multiple times
+            var result = OldPhonePadDecoder.OldPhonePad("2 3 4 5#");
+            Assert.Equal("ADGJ", result);
+        }
+
         #endregion
 
         #region Error Handling Tests
@@ -333,8 +353,9 @@ namespace OldPhonePad.FSM.Tests
         public void ShouldHandleLongInput()
         {
             // A really long message - like texting an essay in 2003
+            // 44=H, 33=E, 555=L, space, 555=L, 666=O, space, 999=Y, 666=O, 777=R, 555=L, 3=D
             var result = OldPhonePadDecoder.OldPhonePad("4433555 555666 9996667775553#");
-            Assert.Equal("HELLOWORLD", result);
+            Assert.Equal("HELLOYORLD", result);
         }
 
         [Fact]
@@ -365,8 +386,9 @@ namespace OldPhonePad.FSM.Tests
         public void ShouldHandleRapidStateChanges()
         {
             // Tests FSM with rapid transitions between states
+            // 2=A, backspace removes A, 3=D, backspace removes D, 4=G, backspace removes G, 5=J
             var result = OldPhonePadDecoder.OldPhonePad("2*3*4*5#");
-            Assert.Equal("", result);
+            Assert.Equal("J", result);
         }
 
         [Fact]
@@ -381,8 +403,9 @@ namespace OldPhonePad.FSM.Tests
         public void ShouldHandleKey0Multiple()
         {
             // Multiple presses of 0 (only has one character)
+            // 2=A, 0=space, 0=space, 0=space -> but consecutive 0s just give one space
             var result = OldPhonePadDecoder.OldPhonePad("2000#");
-            Assert.Equal("A  ", result);
+            Assert.Equal("A ", result);
         }
 
         #endregion

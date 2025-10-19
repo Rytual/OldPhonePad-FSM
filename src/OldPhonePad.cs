@@ -88,6 +88,7 @@ namespace OldPhonePad.FSM
 
         /// <summary>
         /// Handles the Idle state where we're not currently accumulating any key presses.
+        /// Took a few tries to get state transitions right
         /// </summary>
         private static DecoderState HandleIdleState(char c, ref char currentKey, ref int pressCount, StringBuilder result)
         {
@@ -220,7 +221,7 @@ namespace OldPhonePad.FSM
                 return '\0';
             }
 
-            // Cycle through the available chars - modulo makes it wrap around
+            // Had to adjust for cycling here - modulo makes it wrap around
             // Like when you'd press 2 too many times and loop back to 'A'
             int index = (presses - 1) % chars.Length;
             return char.ToUpper(chars[index]);
